@@ -208,10 +208,3 @@ def Logout():
 if __name__ == "__main__": 
     app.run(debug=True)
 
-
-
-
-
-
-    ###SEGUIR CON ESTE CTM Hacelo sin un From Y aqui sin un POST
-    ### Arrreglar NumPedido en el Registrar Nuevo Pedido
