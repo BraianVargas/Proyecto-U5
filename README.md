@@ -1,2 +1,2 @@
 # Unidad-5
-POO 2020
+Proyecto App Web con flask. Realizado con Luciano Espejo
