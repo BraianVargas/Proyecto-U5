@@ -1,0 +1,62 @@
+{% extends "base_template2.html" %}
+{% block content %}
+<div id="Registro">
+    <div class="container" style="margin: auto; margin-top: 70px;height: 100%;">
+        <div class="row" style="display: flex;">
+            <div class="column" style="flex: 50%; padding: 10px;height: 300px; max-height: 300px;">
+                <!-- ***********************************FORM LISTA PEDIDOS ****************************************  -->
+                <form style="text-align: center; border-radius: 90px; width: 500px;"
+                    action="{{ url_for('Nuevopedido') }}" method="POST">
+                    <label for="Mesa" class="justify-center">Ingrese Numero de Mesa</label>
+                    <input type="number" name="Mesa">
+                    <div class="justify-content-center align-self-center w-100">
+                        <h1 style="text-align: center;">
+                            Orden - Total : $ {{ total }} </h1>
+                        <ul class="list-group-flush order-list" style="overflow-y: scroll; display: block;">
+
+                            {% if listaNom %}
+                            {% for nombre in listaNom %}
+                            <li class="list-group-item">
+                                <p> {{nombre}}: x {{cantidad}} </p>
+                            </li>
+                            {% endfor %}
+                            {% else %}
+                                {% if listaNom == '' %}
+                                <li class="list-group-item">
+                                    <a> Esperando pedidos </a>
+                                </li>
+                                {%endif%}
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <label for="observacion" style="bottom:85px;">Observacion del Pedido</label>
+                    <input type="text" name="items" id="items-number" class="d-none">
+                    <input type="number" name="total" id="total" class="d-none">
+                    <input type="text" name="observacion" id="observacion" style="bottom:90px; right: 100px;">
+                    <button type="submit" id="confirmar" style="bottom:100px;">Confirmar pedido</button>
+            </div>
+            <div class="column" style="flex: 50%; padding: 10px;height: 300px;">
+                <div style="text-align: center;">
+                    <h1>CARTA DEL RESTAURANTE</h1>
+                    <ul class="list-group-flush">
+                        {% if productos %}
+                        {% for producto in productos %}
+                        <li class="list-group-item">
+                            <a href="{{ url_for ( 'Listar',nombre= producto.Nombre,precio=producto.PrecioUnitario ) }}">
+                                {{producto.Nombre}} --> ${{producto.PrecioUnitario}}
+                            </a>
+                        </li>
+                        {% endfor %}
+                        {% else %}
+                        <li class="list-group-item">
+                            <h1>No se han encontrado productos</h1>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

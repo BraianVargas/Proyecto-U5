@@ -1,0 +1,21 @@
+{% extends "base_template2.html" %}
+{% block title %} Ingreso {% endblock %}
+{% block content %}
+<div class="funciones">
+    <h2 style="width: 40%; margin-left:40%"> Bienvenido {{ Tipo }} </h2>
+    <h2 style="width: 40%; margin-left:20%"> FUNCIONALIDADES: </h2>
+    {%if Tipo == 'Mozo'%}
+    <ul>
+        <li style="width: 40%; margin-left: 20%;"> <a href="{{ url_for('registarPedido')}}">Crear un Nuevo Pedido</a> </li>
+        <li style="width: 40%; margin-left: 20%;"> <a href="{{ url_for('ListarCocinero')}}">Listar pedidos vigentes / Cobrar Pedido</a> </li>
+    </ul>
+    {%elif Tipo == 'Cocinero'%}
+        <ul>
+            <li>
+                <a style="width: 40%; margin-left: 20%;" href="{{url_for('ListarCocinero')}}">Marcar pidido como Listo</a> 
+            </li>
+        </ul>
+    {%endif%}
+    
+</div>
+{% endblock %}
