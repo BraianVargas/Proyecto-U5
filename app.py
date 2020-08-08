@@ -11,7 +11,6 @@ app.config.from_pyfile("config.py")
 from models import Usuarios,Pedidos, ItemsPedidos, Productos, basedatos
         
 listapedidos = []
-listapedidos = []
 listaprecios = []
 #cant = 0
 
@@ -36,7 +35,6 @@ def LOGIN ():
                 if usuario.Clave == result.hexdigest():
                     session['DNI'] = usuario.DNI
                     session['Tipo'] = usuario.Tipo
-                    print("ENTRE")
                     return redirect(url_for('index'))
                 else:
                     return redirect(url_for('login'))
@@ -65,8 +63,6 @@ def Nuevopedido():
     if request.method == "POST":
         if "DNI" in session and "Tipo" in session:
             if session["Tipo"] == 'Mozo':
-                #Observacion = request.form['items']
-                #Observacion = Observacion.split(",")
                 total = 0
                 for i in range(len(listaprecios)):
                     total += listaprecios[i]
@@ -75,31 +71,12 @@ def Nuevopedido():
                 pedido_nuevo = Pedidos(NumPedido = "{}".format(int(p)),Fecha = datetime.date.today(), Total = total, Cobrado = 'False', Observacion=request.form['observacion'], Mesa = request.form['Mesa'],  DniMozo = escape(session["DNI"]))
                 basedatos.session.add(pedido_nuevo)
                 basedatos.session.commit()
-                #print(pedido_nuevo.NumPedido)
-                #q = basedatos.session.query(ItemsPedidos).count()
-                #print(q)
-                for item in range(len(listapedidos)):
+                for item in listapedidos:
                     q = basedatos.session.query(ItemsPedidos).count()
                     q += 2
-                    if listapedidos[item] == "Pizza Muzarrella": 
-                        producto = Productos.query.filter_by(Nombre = "Pizza Muzarrella").first()
-                        nuevo_item = ItemsPedidos(NumItem = "{}".format(int(q)), NumPedido=pedido_nuevo.NumPedido,NumProducto="{}".format(int(1)), Precio=producto.PrecioUnitario, Estado="Pendiente")
-                        basedatos.session.add(nuevo_item)
-                    else:
-                        if listapedidos[item] == "Gaseosa":
-                            producto = Productos.query.filter_by(Nombre = "Gaseosa").first()
-                            nuevo_item = ItemsPedidos(NumItem = "{}".format(int(q)),NumPedido=pedido_nuevo.NumPedido, NumProducto="{}".format(int(2)), Precio=producto.PrecioUnitario, Estado="Pendiente")
-                            basedatos.session.add(nuevo_item)
-                        else:
-                            if listapedidos[item] == "Cerveza":
-                                producto = Productos.query.filter_by(Nombre = "Cerveza").first()
-                                nuevo_item = ItemsPedidos(NumItem = "{}".format(int(q)),NumPedido=pedido_nuevo.NumPedido, NumProducto="{}".format(int(3)), Precio=producto.PrecioUnitario, Estado="Pendiente")
-                                basedatos.session.add(nuevo_item)
-                            else:
-                                if listapedidos[item] == "Lomo":
-                                    producto = Productos.query.filter_by(Nombre = "Lomo").first()
-                                    nuevo_item = ItemsPedidos(NumItem = "{}".format(int(q)),NumPedido=pedido_nuevo.NumPedido, NumProducto="{}".format(int(4)), Precio=producto.PrecioUnitario, Estado="Pendiente")
-                                    basedatos.session.add(nuevo_item) 
+                    producto = Productos.query.filter_by(Nombre = item).first()
+                    nuevo_item = ItemsPedidos(NumItem = "{}".format(int(q)), NumPedido=pedido_nuevo.NumPedido,NumProducto="{}".format(int(producto.NumProducto)), Precio=producto.PrecioUnitario, Estado="Pendiente")
+                    basedatos.session.add(nuevo_item)
                 basedatos.session.commit()
                 del listapedidos[:]
                 del listaprecios[:]
@@ -138,7 +115,7 @@ def Listar(nombre,precio):
             return render_template('registar_pedido_mozo.html',productos=productos,listaNom=listapedidos,total=Total)
     except(TypeError):
         print("")
-#Listar Cocinero
+
 @app.route("/ListarPedido")
 def ListarCocinero ():
     if "DNI" in session and "Tipo" in session:
@@ -146,11 +123,9 @@ def ListarCocinero ():
             union = basedatos.session.query(Pedidos).join(ItemsPedidos).\
                 filter(ItemsPedidos.Estado == "Pendiente").all()
             p = Pedidos.query.all()
-            #print(union)
             return render_template("listar_cocinero.html", pedidos = union)
         elif escape(session['Tipo']) == "Mozo":
             fecha_de_hoy = datetime.date.today()
-            print(fecha_de_hoy)
             pedidos = Pedidos.query.filter_by(Fecha = fecha_de_hoy,Cobrado="False").all()
             return render_template('Listar_mozo.html', pedidos = pedidos)
     else:
@@ -169,7 +144,7 @@ def Cocinero (numpedido):
             redirect(url_for("Logout"))
     else:
         return redirect(url_for("login"))
-#COBRAR PEDIDO
+
 @app.route("/CobrarPedido <int:pedido>")
 def Cobrar (pedido):
     if "DNI" in session and "Tipo" in session:
@@ -207,4 +182,3 @@ def Logout():
 
 if __name__ == "__main__": 
     app.run(debug=True)
-
