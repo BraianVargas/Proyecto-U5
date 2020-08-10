@@ -66,14 +66,15 @@ def Nuevopedido():
                 total = 0
                 for i in range(len(listaprecios)):
                     total += listaprecios[i]
-                p = basedatos.session.query(Pedidos).count()
-                p += 2
+                p = basedatos.session.query(Pedidos).count()  #Numero de pedidos
+                p += 1  #Auto incremento de Numero de pedidos
                 pedido_nuevo = Pedidos(NumPedido = "{}".format(int(p)),Fecha = datetime.date.today(), Total = total, Cobrado = 'False', Observacion=request.form['observacion'], Mesa = request.form['Mesa'],  DniMozo = escape(session["DNI"]))
                 basedatos.session.add(pedido_nuevo)
                 basedatos.session.commit()
+                
                 for item in listapedidos:
-                    q = basedatos.session.query(ItemsPedidos).count()
-                    q += 2
+                    q = basedatos.session.query(ItemsPedidos).count() #Numero de Items
+                    q +=1       #Auto incremento de Numero de item
                     producto = Productos.query.filter_by(Nombre = item).first()
                     nuevo_item = ItemsPedidos(NumItem = "{}".format(int(q)), NumPedido=pedido_nuevo.NumPedido,NumProducto="{}".format(int(producto.NumProducto)), Precio=producto.PrecioUnitario, Estado="Pendiente")
                     basedatos.session.add(nuevo_item)
